@@ -1,0 +1,164 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    homebrew_taps:
+      - homebrew/dupes
+      - homebrew/science
+      - railwaycat/emacsmacport
+    homebrew_formulae:
+      # programming
+      - name: emacs-mac
+      - name: make
+      - name: gcc
+      - name: gdb
+      - name: pyenv
+      - name: rbenv
+      - name: node
+      - name: scala
+      - name: haskell-stack
+      - name: go
+      - name: dart
+        options: with-dartium
+      # file management
+      - name: git
+      - name: gitless
+      - name: tig
+      # web
+      - name: chromedriver
+      # image & video
+      - name: imagemagick
+      - name: ffmpeg
+      - name: libbluray
+      - name: libdvdcss
+      - name: youtube-dl
+      # system tools
+      - name: fish
+      - name: fzf
+      - name: curl
+      - name: grep
+      - name: nkf
+      - name: gzip
+      - name: less
+      - name: htop
+      - name: p7zip
+      - name: unrar
+      - name: wget
+      - name: lv
+      - name: tree
+      # network
+      - name: openssh
+      - name: rsync
+      - name: whois
+      - name: gnupg
+      - name: openssl
+      # misc
+      - name: wine
+        options: devel
+      - name: winetricks
+    homebrew_cask_formulae:
+      # development
+      - name: atom
+      - name: docker
+      - name: vagrant
+      - name: virtualbox
+      - name: sourcetree
+      - name: github-desktop
+      - name: google-cloud-sdk
+      - name: googleappengine
+      - name: racket
+      # web
+      - name: google-chrome
+      - name: google-earth-web-plugin
+      - name: transmission
+      - name: bathyscaphe
+      # image
+      - name: gimp
+      - name: simple-comic
+      - name: google-nik-collection
+      # video
+      - name: vlc
+      - name: camtwist
+      - name: handbrake
+      # sound & music
+      - name: audacity
+      - name: audacity-lame-library
+      - name: xld
+      - name: soundflower
+      - name: linein
+      - name: radiant-player
+      - name: amazon-music
+      # system tools
+      - name: iterm2
+      - name: karabiner-elements
+      - name: appcleaner
+      - name: disk-inventory-x
+      - name: the-unarchiver
+      - name: xquartz
+      - name: spectacle
+      # book & document
+      - name: kindle
+      - name: skim
+      - name: libreoffice
+      # misc
+      - name: google-drive
+      - name: google-hangouts
+      - name: google-japanese-ime
+      - name: google-photos-backup
+      - name: google-plus-auto-backup
+      - name: google-refine
+      - name: slack
+  tasks:
+    - name: add homebrew taps
+      homebrew_tap: tap={{ item }} state=present
+      with_items: "{{ homebrew_taps }}"
+    - name: update homebrew
+      homebrew: update_homebrew=yes
+
+    # brew
+    - name: install homebrew formulae
+      homebrew: >
+        name={{ item.name }}
+        state={{ item.state | default('latest') }}
+        options={{ item.options | default() }}
+      with_items: "{{ homebrew_formulae }}"
+      register: brew_result
+
+    - name: make info directory for brew 
+      file: path=brew_info state=directory
+    - name: save brew info
+      shell: brew info {{ item }} > brew_info/{{ item }}
+      with_items: "{{ brew_result.results | selectattr('changed') | map(attribute='item') | map(attribute='name') | list }}"
+
+    # cask
+    - name: install homebrew casks formulae
+      homebrew_cask: >
+        name={{ item.name }}
+        state={{ item.state | default('installed') }}
+        options={{ item.options | default() }}
+      with_items: "{{ homebrew_cask_formulae }}"
+      register: cask_result
+
+    - name: make info directory for cask
+      file: path=brew_info state=directory
+    - name: save cask info
+      shell: brew cask info {{ item }} > brew_info/{{ item }}
+      with_items: "{{ cask_result.results | selectattr('changed') | map(attribute='item') | map(attribute='name') | list }}"
+
+    - name: post process brew formulae
+      script: brew_post_process.sh
+
+    - name: clone dotfiles
+      git: >
+        repo=https://github.com/shuuji3/dotfiles.git
+        dest=~/src/dotfiles
+        update=no
+    - name: clone dotfiles for .macos
+      git: >
+        repo=https://github.com/shuuji3/mathiasbynens-dotfiles.git
+        dest=~/src/mathiasbynens-dotfiles
+        update=no
+
+    - name: apply MacOS setting script
+      script: macos.sh 
