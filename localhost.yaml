@@ -118,10 +118,10 @@
 
     # brew
     - name: install homebrew formulae
-      homebrew: >
-        name={{ item.name }}
-        state={{ item.state | default('latest') }}
-        options={{ item.options | default() }}
+      homebrew:
+        name: {{ item.name }}
+        state: {{ item.state | default('latest') }}
+        options: {{ item.options | default() }}
       with_items: "{{ homebrew_formulae }}"
       register: brew_result
 
@@ -133,10 +133,10 @@
 
     # cask
     - name: install homebrew casks formulae
-      homebrew_cask: >
-        name={{ item.name }}
-        state={{ item.state | default('installed') }}
-        options={{ item.options | default() }}
+      homebrew_cask:
+        name: {{ item.name }}
+        state: {{ item.state | default('installed') }}
+        options: {{ item.options | default() }}
       with_items: "{{ homebrew_cask_formulae }}"
       register: cask_result
 
@@ -150,15 +150,19 @@
       script: brew_post_process.sh
 
     - name: clone dotfiles
-      git: >
-        repo=https://github.com/shuuji3/dotfiles.git
-        dest=~/src/dotfiles
-        update=no
-    - name: clone dotfiles for .macos
-      git: >
-        repo=https://github.com/shuuji3/mathiasbynens-dotfiles.git
-        dest=~/src/mathiasbynens-dotfiles
-        update=no
-
+      git:
+        repo: https://github.com/shuuji3/dotfiles.git
+        dest: ~/src/dotfiles
+        update: no
+    - name: sync dotfiles
+      synchronize: 
+        src: ~/src/dotfiles/
+        dest: ~/
+      
+    - name: clone mathiasbynens-dotfiles for .macos
+      git:
+        repo: https://github.com/shuuji3/mathiasbynens-dotfiles.git
+        dest: ~/src/mathiasbynens-dotfiles
+        update: no
     - name: apply MacOS setting script
-      script: macos.sh 
+      script: ~/src/mathiasbynens-dotfiles/macos.sh 
