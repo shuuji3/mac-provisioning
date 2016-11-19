@@ -6,7 +6,9 @@
     homebrew_taps:
       - homebrew/dupes
       - homebrew/science
+      - caskroom/cask
       - railwaycat/emacsmacport
+      - dart/dart-lang
     homebrew_formulae:
       # programming
       - name: emacs-mac
