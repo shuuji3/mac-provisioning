@@ -1,12 +1,16 @@
 #!/bin/bash
 
-# install brew
-echo installing homebrew...
-/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+# install homebrew
+if ! which brew; then
+    echo installing homebrew...
+    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+fi
 
 # install ansible
-echo installing ansible...
-brew install ansible
+if ! which ansible; then
+    echo installing ansible...
+    brew install ansible
+fi
 
 # clone this mac-provisioning repository itself
 echo cloning mac-provisioning repository...
