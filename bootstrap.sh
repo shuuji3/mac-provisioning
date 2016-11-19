@@ -14,7 +14,7 @@ fi
 
 # clone this mac-provisioning repository itself
 echo cloning mac-provisioning repository...
-mkdir ~/src/ && cd ~/src/
+mkdir -p ~/src/ && cd ~/src/
 git clone https://github.com/shuuji3/mac-provisioning.git
 cd mac-provisioning/
 
