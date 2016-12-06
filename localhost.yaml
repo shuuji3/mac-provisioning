@@ -8,7 +8,7 @@
       - homebrew/science
       - caskroom/cask
       - railwaycat/emacsmacport
-      - dart/dart-lang
+      - dart-lang/dart
     homebrew_formulae:
       # programming
       - name: emacs-mac
@@ -16,9 +16,11 @@
       - name: gcc
       - name: gdb
       - name: pyenv
+      - name: pyenv-virtualenv
+        options: HEAD
       - name: rbenv
+      - name: scalaenv
       - name: node
-      - name: scala
       - name: haskell-stack
       - name: go
       - name: dart
@@ -29,6 +31,7 @@
       - name: tig
       # web
       - name: chromedriver
+      - name: phantomjs
       # image & video
       - name: imagemagick
       - name: ffmpeg
@@ -42,13 +45,14 @@
       - name: grep
       - name: nkf
       - name: gzip
-      - name: less
       - name: htop
       - name: p7zip
       - name: unrar
       - name: wget
       - name: lv
       - name: tree
+      - name: psgrep
+      - name: cowsay
       # network
       - name: openssh
       - name: rsync
@@ -57,7 +61,6 @@
       - name: openssl
       # misc
       - name: wine
-        options: devel
       - name: winetricks
     homebrew_cask_formulae:
       # development
@@ -99,6 +102,10 @@
       - name: the-unarchiver
       - name: xquartz
       - name: spectacle
+      - name: teleport
+      - name: brow
+      - name: alfred
+      - name: launchcontrol
       # book & document
       - name: kindle
       - name: skim
@@ -133,6 +140,9 @@
       shell: brew info {{ item }} > brew_info/{{ item }}
       with_items: "{{ brew_result.results | selectattr('changed') | map(attribute='item') | map(attribute='name') | list }}"
 
+    - name: let the brew's curl used to avoid download error
+      shell: brew link curl --force
+
     # cask
     - name: install homebrew casks formulae
       homebrew_cask: >-
@@ -149,7 +159,7 @@
       with_items: "{{ cask_result.results | selectattr('changed') | map(attribute='item') | map(attribute='name') | list }}"
 
     - name: post process brew formulae
-      script: brew_post_process.sh
+      script: brew_post_process.fish
 
     - name: clone dotfiles
       git:
@@ -167,4 +177,4 @@
         dest: ~/src/mathiasbynens-dotfiles
         update: no
     - name: apply MacOS setting script
-      script: ~/src/mathiasbynens-dotfiles/macos.sh 
+      script: ~/src/mathiasbynens-dotfiles/.macos

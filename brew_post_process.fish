@@ -1,7 +1,7 @@
 #!/usr/local/bin/fish
 
 # link brew cask apps
-sudo brew linkapps
+brew linkapps
 
 # fish
 if not cat /etc/shells | grep fish
