@@ -36,6 +36,7 @@
       - name: imagemagick
       - name: ffmpeg
       - name: libbluray
+      - name: libaacs
       - name: libdvdcss
       - name: youtube-dl
       # system tools
@@ -53,6 +54,7 @@
       - name: tree
       - name: psgrep
       - name: cowsay
+      - name: mas
       # network
       - name: openssh
       - name: rsync
@@ -73,6 +75,7 @@
       - name: google-cloud-sdk
       - name: googleappengine
       - name: racket
+      - name: dash
       # web
       - name: google-chrome
       - name: google-earth-web-plugin
@@ -87,8 +90,6 @@
       - name: camtwist
       - name: handbrake
       # sound & music
-      - name: audacity
-      - name: audacity-lame-library
       - name: xld
       - name: soundflower
       - name: linein
