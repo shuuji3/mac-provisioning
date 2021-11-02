@@ -1,3 +1,6 @@
+**🏚 Deprecated:** I have moved to [shuuji3/setup-env](https://github.com/shuuji3/setup-env).
+
+---
 
 # mac-provisioning
 
